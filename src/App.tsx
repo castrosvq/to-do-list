@@ -1,14 +1,5 @@
+import { IonList } from "@ionic/react";
 import {
-  IonCard,
-  IonCardContent,
-  IonCardHeader,
-  IonCardTitle,
-  IonInput,
-  IonItem,
-  IonList,
-} from "@ionic/react";
-import {
-  IonContent,
   IonApp,
   setupIonicReact,
   IonButton,
@@ -33,8 +24,49 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import { usePhoto } from "./hooks";
 import Header from "./components/Header/Header";
+import AddButton from "./components/AddButton/AddButton";
+import Card from "./components/Card/Card";
 
 setupIonicReact({ mode: "ios" });
+
+const todos = [
+  {
+    id: "1",
+    description: "description 1",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "2",
+    description: "description 2",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "3",
+    description: "description 3",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "4",
+    description: "description 4",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "5",
+    description: "description 5",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "6",
+    description: "description 6",
+
+    imgSrc: "https://picsum.photos/200/300",
+  },
+  {
+    id: "7",
+    description: "description 7",
+    imgSrc: "https://picsum.photos/200/300",
+  },
+];
 
 function App() {
   const { takePhoto, photos } = usePhoto();
@@ -43,28 +75,24 @@ function App() {
     <>
       <IonApp>
         <Header />
-        <IonContent className="ion-padding">
-          <IonButton onClick={() => takePhoto()}>Tomar foto</IonButton>
-          {photos.map((photo) => (
-            <IonCol size="6" key={photo.filepath}>
-              <IonImg src={photo.webviewPath} />
-            </IonCol>
-          ))}
-        </IonContent>
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Tarea</IonCardTitle>
-          </IonCardHeader>
-
-          <IonCardContent>
-            <IonList>
-              <IonItem>
-                <IonInput></IonInput>
-              </IonItem>
-            </IonList>
-          </IonCardContent>
-          <IonButton>Añadir</IonButton>
-        </IonCard>
+        <IonList>
+          {todos.map((todo) => {
+            return (
+              <Card
+                key={todo.id}
+                imgSrc={todo.imgSrc}
+                text={todo.description}
+              />
+            );
+          })}
+        </IonList>
+        <IonButton onClick={() => takePhoto()}>Tomar foto</IonButton>
+        {photos.map((photo) => (
+          <IonCol size="6" key={photo.filepath}>
+            <IonImg src={photo.webviewPath} />
+          </IonCol>
+        ))}
+        <AddButton />
       </IonApp>
     </>
   );

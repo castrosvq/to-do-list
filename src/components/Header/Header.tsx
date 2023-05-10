@@ -2,8 +2,8 @@ import { IonText } from "@ionic/react";
 
 function Header() {
   return (
-    <IonText color="primary">
-      <h1>To do list</h1>
+    <IonText color="primary" className="flex justify-center py-2.5">
+      <h1 className="text-4xl">To do list</h1>
     </IonText>
   );
 }
