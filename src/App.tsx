@@ -31,7 +31,7 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
-import { usePhoto } from "../hooks";
+import { usePhoto } from "./hooks";
 
 setupIonicReact({ mode: "ios" });
 

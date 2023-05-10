@@ -1,7 +1,7 @@
 export * from "./usePhoto";
 
 import { useState } from "react";
-import { base64FromPath } from "./utils";
+import { base64FromPath } from "../utils";
 import {
   Camera,
   CameraResultType,
@@ -9,7 +9,7 @@ import {
   Photo,
 } from "@capacitor/camera";
 import { uploadString } from "firebase/storage";
-import { storageRef } from "../src/firebase";
+import { storageRef } from "../firebase";
 
 export interface UserPhoto {
   filepath: string;
