@@ -32,6 +32,7 @@ import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import { usePhoto } from "./hooks";
+import Header from "./components/Header/Header";
 
 setupIonicReact({ mode: "ios" });
 
@@ -41,6 +42,7 @@ function App() {
   return (
     <>
       <IonApp>
+        <Header />
         <IonContent className="ion-padding">
           <IonButton onClick={() => takePhoto()}>Tomar foto</IonButton>
           {photos.map((photo) => (
