@@ -1,4 +1,13 @@
 import {
+  IonCard,
+  IonCardContent,
+  IonCardHeader,
+  IonCardTitle,
+  IonInput,
+  IonItem,
+  IonList,
+} from "@ionic/react";
+import {
   IonContent,
   IonApp,
   setupIonicReact,
@@ -40,6 +49,20 @@ function App() {
             </IonCol>
           ))}
         </IonContent>
+        <IonCard>
+          <IonCardHeader>
+            <IonCardTitle>Tarea</IonCardTitle>
+          </IonCardHeader>
+
+          <IonCardContent>
+            <IonList>
+              <IonItem>
+                <IonInput></IonInput>
+              </IonItem>
+            </IonList>
+          </IonCardContent>
+          <IonButton>Añadir</IonButton>
+        </IonCard>
       </IonApp>
     </>
   );
