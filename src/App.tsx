@@ -1,5 +1,11 @@
-import { IonContent, IonApp, setupIonicReact, IonButton } from "@ionic/react";
-import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import {
+  IonContent,
+  IonApp,
+  setupIonicReact,
+  IonButton,
+  IonCol,
+  IonImg,
+} from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -16,33 +22,23 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
+import { usePhoto } from "../hooks";
 
 setupIonicReact({ mode: "ios" });
 
-function usePhotoGallery() {
-  const takePhoto = async () => {
-    const photo = await Camera.getPhoto({
-      resultType: CameraResultType.Uri,
-      source: CameraSource.Camera,
-      quality: 100,
-    });
-
-    console.log(photo);
-  };
-
-  return {
-    takePhoto,
-  };
-}
-
 function App() {
-  const { takePhoto } = usePhotoGallery();
+  const { takePhoto, photos } = usePhoto();
 
   return (
     <>
       <IonApp>
         <IonContent className="ion-padding">
           <IonButton onClick={() => takePhoto()}>Tomar foto</IonButton>
+          {photos.map((photo) => (
+            <IonCol size="6" key={photo.filepath}>
+              <IonImg src={photo.webviewPath} />
+            </IonCol>
+          ))}
         </IonContent>
       </IonApp>
     </>
