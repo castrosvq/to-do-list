@@ -33,6 +33,7 @@ import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
 import { usePhoto } from "./hooks";
 import Header from "./components/Header/Header";
+import AddButton from "./components/Header/AddButton";
 
 setupIonicReact({ mode: "ios" });
 
@@ -51,20 +52,7 @@ function App() {
             </IonCol>
           ))}
         </IonContent>
-        <IonCard>
-          <IonCardHeader>
-            <IonCardTitle>Tarea</IonCardTitle>
-          </IonCardHeader>
-
-          <IonCardContent>
-            <IonList>
-              <IonItem>
-                <IonInput></IonInput>
-              </IonItem>
-            </IonList>
-          </IonCardContent>
-          <IonButton>Añadir</IonButton>
-        </IonCard>
+        <AddButton />
       </IonApp>
     </>
   );
