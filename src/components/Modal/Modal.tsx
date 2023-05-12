@@ -2,6 +2,7 @@ import {
   IonButton,
   IonButtons,
   IonHeader,
+  IonIcon,
   IonModal,
   IonTitle,
   IonToolbar,
@@ -22,33 +23,42 @@ function Modal({ closeModal, isOpen }: Props) {
     <IonModal isOpen={isOpen} backdropDismiss={false}>
       <IonHeader className="mb-6">
         <IonToolbar>
-          <IonButtons slot="start">
-            <IonButton className="text-2xl" onClick={closeModal}>
+          <IonButtons slot="secondary">
+            <IonButton
+              onClick={closeModal}
+              className="font-bold"
+              color="medium"
+              fill="solid"
+            >
+              <IonIcon slot="end" src="close.svg"></IonIcon>
               Cancel
             </IonButton>
           </IonButtons>
-          <IonTitle className="text-3xl">Nueva Nota</IonTitle>
-          <IonButtons slot="end">
+          <IonButtons slot="primary">
             <IonButton
-              className="text-2xl"
-              strong={true}
               onClick={() => {
                 console.log(inputRef);
               }}
+              className="font-bold"
+              color="success"
+              fill="solid"
             >
+              <IonIcon slot="end" src="check.svg"></IonIcon>
               Add
             </IonButton>
           </IonButtons>
+          <IonTitle className="text-2xl font-bold">Nueva nota</IonTitle>
         </IonToolbar>
       </IonHeader>
       <div className="flex flex-col flex-1 items-center">
         <input
-          className="text-2xl p-4 m-6 border-b border-blue-400"
+          className="text-2xl p-4 m-6 border-b "
           type="text"
           ref={inputRef}
         />
         {photo === null ? (
-          <IonButton onClick={takePhoto} className="ml-2 my-6">
+          <IonButton onClick={takePhoto} className="ml-2 my-6 font-bold">
+            <IonIcon slot="end" src="camera.svg"></IonIcon>
             Tomar foto
           </IonButton>
         ) : (
