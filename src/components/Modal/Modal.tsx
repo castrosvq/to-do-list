@@ -4,9 +4,7 @@ import {
   IonContent,
   IonHeader,
   IonInput,
-  IonItem,
   IonModal,
-  IonThumbnail,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
@@ -33,16 +31,22 @@ function Modal({ closeModal, isOpen }: Props) {
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      <IonContent className="flex justify-center my-7">
-        <IonInput className="mx-4 px-4 border text-2xl" />
+      {/* <IonContent> */}
+      <IonInput className="m-0 text-2xl border-b border-gray-400" />
+      <IonContent>
+        {" "}
         {photo === null ? (
-          <IonButton onClick={takePhoto} className="my-5 self-center">
+          <IonButton onClick={takePhoto} className="ml-2 my-6">
             Tomar foto
           </IonButton>
         ) : (
-          <img src={photo?.webviewPath} />
+          <img
+            className="my-12 w-2/4 absolute left-1/4"
+            src={photo?.webviewPath}
+          />
         )}
       </IonContent>
+      {/* </IonContent> */}
     </IonModal>
   );
 }

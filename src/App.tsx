@@ -1,11 +1,5 @@
 import { IonList } from "@ionic/react";
-import {
-  IonApp,
-  setupIonicReact,
-  IonButton,
-  IonCol,
-  IonImg,
-} from "@ionic/react";
+import { IonApp, setupIonicReact } from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -22,10 +16,11 @@ import "@ionic/react/css/text-alignment.css";
 import "@ionic/react/css/text-transformation.css";
 import "@ionic/react/css/flex-utils.css";
 import "@ionic/react/css/display.css";
-import { usePhoto } from "./hooks";
 import Header from "./components/Header/Header";
 import AddButton from "./components/AddButton/AddButton";
 import Card from "./components/Card/Card";
+import { useState } from "react";
+import Modal from "./components/Modal/Modal";
 
 setupIonicReact({ mode: "ios" });
 
@@ -69,7 +64,12 @@ const todos = [
 ];
 
 function App() {
-  const { takePhoto, photos } = usePhoto();
+  const [isOpen, setIsOpen] = useState(false);
+  // const { takePhoto } = usePhoto();
+
+  const closeModal = () => {
+    setIsOpen(false);
+  };
 
   return (
     <>
@@ -86,13 +86,8 @@ function App() {
             );
           })}
         </IonList>
-        <IonButton onClick={() => takePhoto()}>Tomar foto</IonButton>
-        {photos.map((photo) => (
-          <IonCol size="6" key={photo.filepath}>
-            <IonImg src={photo.webviewPath} />
-          </IonCol>
-        ))}
-        <AddButton />
+        <Modal closeModal={closeModal} isOpen={isOpen} />
+        <AddButton onClick={() => setIsOpen(true)} />
       </IonApp>
     </>
   );

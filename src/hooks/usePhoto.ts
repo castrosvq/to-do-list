@@ -17,7 +17,7 @@ export interface UserPhoto {
 }
 
 export function usePhoto() {
-  const [photos, setPhotos] = useState<UserPhoto[]>([]);
+  const [photo, setPhoto] = useState<UserPhoto | null>(null);
 
   const savePicture = async (
     photo: Photo,
@@ -48,17 +48,17 @@ export function usePhoto() {
     });
 
     const fileName = new Date().getTime() + ".jpeg";
-    const newPhotos: UserPhoto = {
+    const newPhoto: UserPhoto = {
       filepath: fileName,
       webviewPath: photo.webPath,
     };
 
-    setPhotos([...photos, newPhotos]);
-    savePicture(photo, fileName);
+    setPhoto(newPhoto);
   };
 
   return {
     takePhoto,
-    photos,
+    photo,
+    savePicture,
   };
 }
