@@ -1,14 +1,13 @@
 import {
   IonButton,
   IonButtons,
-  IonContent,
   IonHeader,
-  IonInput,
   IonModal,
   IonTitle,
   IonToolbar,
 } from "@ionic/react";
 import { usePhoto } from "../../hooks";
+import { useRef } from "react";
 
 type Props = {
   closeModal: () => void;
@@ -17,36 +16,45 @@ type Props = {
 
 function Modal({ closeModal, isOpen }: Props) {
   const { takePhoto, photo } = usePhoto();
+  const inputRef = useRef(null);
 
   return (
     <IonModal isOpen={isOpen} backdropDismiss={false}>
       <IonHeader className="mb-6">
         <IonToolbar>
           <IonButtons slot="start">
-            <IonButton onClick={closeModal}>Cancel</IonButton>
+            <IonButton className="text-2xl" onClick={closeModal}>
+              Cancel
+            </IonButton>
           </IonButtons>
-          <IonTitle>Nueva Nota</IonTitle>
+          <IonTitle className="text-3xl">Nueva Nota</IonTitle>
           <IonButtons slot="end">
-            <IonButton strong={true}>Add</IonButton>
+            <IonButton
+              className="text-2xl"
+              strong={true}
+              onClick={() => {
+                console.log(inputRef);
+              }}
+            >
+              Add
+            </IonButton>
           </IonButtons>
         </IonToolbar>
       </IonHeader>
-      {/* <IonContent> */}
-      <IonInput className="m-0 text-2xl border-b border-gray-400" />
-      <IonContent>
-        {" "}
+      <div className="flex flex-col flex-1 items-center">
+        <input
+          className="text-2xl p-4 m-6 border-b border-blue-400"
+          type="text"
+          ref={inputRef}
+        />
         {photo === null ? (
           <IonButton onClick={takePhoto} className="ml-2 my-6">
             Tomar foto
           </IonButton>
         ) : (
-          <img
-            className="my-12 w-2/4 absolute left-1/4"
-            src={photo?.webviewPath}
-          />
+          <img className="m-6 p-4" src={photo?.webviewPath} />
         )}
-      </IonContent>
-      {/* </IonContent> */}
+      </div>
     </IonModal>
   );
 }
