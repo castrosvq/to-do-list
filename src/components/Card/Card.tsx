@@ -1,9 +1,9 @@
 import {
-  IonAvatar,
   IonCard,
   IonCardContent,
   IonItem,
   IonLabel,
+  IonThumbnail,
 } from "@ionic/react";
 
 type Props = {
@@ -16,9 +16,9 @@ function Card({ imgSrc, text }: Props) {
     <IonCard>
       <IonCardContent>
         <IonItem>
-          <IonAvatar slot="start">
+          <IonThumbnail slot="start">
             <img src={imgSrc} />
-          </IonAvatar>
+          </IonThumbnail>
           <IonLabel>{text}</IonLabel>
         </IonItem>
       </IonCardContent>
