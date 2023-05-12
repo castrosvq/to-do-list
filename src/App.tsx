@@ -73,7 +73,7 @@ function App() {
 
   return (
     <>
-      <IonApp>
+      <IonApp className=" justify-start ">
         <Header />
         <IonList>
           {todos.map((todo) => {
