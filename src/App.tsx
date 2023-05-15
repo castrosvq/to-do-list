@@ -19,74 +19,41 @@ import "@ionic/react/css/display.css";
 import Header from "./components/Header/Header";
 import AddButton from "./components/AddButton/AddButton";
 import Card from "./components/Card/Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./components/Modal/Modal";
+import { retrieveNotes } from "./firebase";
+import { Note } from "./types";
 
 setupIonicReact({ mode: "ios" });
 
-const todos = [
-  {
-    id: "1",
-    description: "description 1",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "2",
-    description: "description 2",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "3",
-    description: "description 3",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "4",
-    description: "description 4",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "5",
-    description: "description 5",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "6",
-    description: "description 6",
-
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "7",
-    description: "description 7",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-];
-
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  // const { takePhoto } = usePhoto();
+  const [notes, setNotes] = useState<Note[]>([]);
 
   const closeModal = () => {
     setIsOpen(false);
   };
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const notes = await retrieveNotes();
+
+      setNotes(notes);
+    };
+
+    fetchNotes();
+  }, []);
 
   return (
     <>
       <IonApp className=" justify-start ">
         <Header />
         <IonList>
-          {todos.map((todo) => {
-            return (
-              <Card
-                key={todo.id}
-                imgSrc={todo.imgSrc}
-                text={todo.description}
-              />
-            );
+          {notes.map((todo) => {
+            return <Card key={todo.id} {...todo} />;
           })}
         </IonList>
-        <Modal closeModal={closeModal} isOpen={isOpen} />
+        <Modal closeModal={closeModal} isOpen={isOpen} setNotes={setNotes} />
         <AddButton onClick={() => setIsOpen(true)} />
       </IonApp>
     </>

@@ -9,15 +9,39 @@ import {
 } from "@ionic/react";
 import { usePhoto } from "../../hooks";
 import { useRef } from "react";
+import { Note } from "../../types";
+import { saveNote } from "../../firebase";
 
 type Props = {
   closeModal: () => void;
   isOpen: boolean;
+  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
 };
 
-function Modal({ closeModal, isOpen }: Props) {
-  const { takePhoto, photo } = usePhoto();
-  const inputRef = useRef(null);
+function Modal({ closeModal, setNotes, isOpen }: Props) {
+  const { takePhoto, photo, savePicture, setPhoto } = usePhoto();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const handleOnSave = () => {
+    const noteValue = inputRef.current?.value ?? "";
+    const pictureDate = photo?.filepath.slice(0, -5) ?? "";
+
+    const note: Note = {
+      id: pictureDate,
+      value: noteValue,
+      pictureName: pictureDate,
+      createdAt: +pictureDate,
+      updatedAt: +pictureDate,
+    };
+
+    if (photo) {
+      saveNote(note);
+      savePicture(photo, pictureDate);
+      closeModal();
+      setPhoto(null);
+      setNotes((prevNotes) => [note, ...prevNotes]);
+    }
+  };
 
   return (
     <IonModal isOpen={isOpen} backdropDismiss={false}>
@@ -30,20 +54,18 @@ function Modal({ closeModal, isOpen }: Props) {
               color="medium"
               fill="solid"
             >
-              <IonIcon slot="end" src="close.svg"></IonIcon>
+              <IonIcon slot="end" src="close.svg" />
               Cancel
             </IonButton>
           </IonButtons>
           <IonButtons slot="primary">
             <IonButton
-              onClick={() => {
-                console.log(inputRef);
-              }}
+              onClick={handleOnSave}
               className="font-bold"
               color="success"
               fill="solid"
             >
-              <IonIcon slot="end" src="check.svg"></IonIcon>
+              <IonIcon slot="end" src="check.svg" />
               Add
             </IonButton>
           </IonButtons>
@@ -52,13 +74,13 @@ function Modal({ closeModal, isOpen }: Props) {
       </IonHeader>
       <div className="flex flex-col flex-1 items-center">
         <input
-          className="text-2xl p-4 m-6 border-b "
+          className="text-2xl p-4 m-6 w-9/12 text-white bg-gray-400 rounded-sm"
           type="text"
           ref={inputRef}
         />
         {photo === null ? (
           <IonButton onClick={takePhoto} className="ml-2 my-6 font-bold">
-            <IonIcon slot="end" src="camera.svg"></IonIcon>
+            <IonIcon slot="end" src="camera.svg" />
             Tomar foto
           </IonButton>
         ) : (
