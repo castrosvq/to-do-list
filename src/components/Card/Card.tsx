@@ -5,21 +5,36 @@ import {
   IonLabel,
   IonThumbnail,
 } from "@ionic/react";
+import { getDownloadURL, ref } from "firebase/storage";
+import { useEffect, useState } from "react";
+import { storage } from "../../firebase";
+import { Note } from "../../types";
 
-type Props = {
-  imgSrc: string;
-  text: string;
-};
+function Card({ pictureName, value }: Note) {
+  const [imgUrl, setImgUrl] = useState("");
 
-function Card({ imgSrc, text }: Props) {
+  useEffect(() => {
+    setTimeout(() => {
+      getDownloadURL(ref(storage, pictureName))
+        .then((url) => {
+          setImgUrl(url);
+        })
+        .catch((err) => {
+          if (err instanceof Error) {
+            console.log(err.message);
+          }
+        });
+    }, 500);
+  }, [pictureName]);
+
   return (
     <IonCard>
       <IonCardContent>
         <IonItem>
           <IonThumbnail slot="start">
-            <img src={imgSrc} />
+            <img src={imgUrl} />
           </IonThumbnail>
-          <IonLabel>{text}</IonLabel>
+          <IonLabel>{value}</IonLabel>
         </IonItem>
       </IonCardContent>
     </IonCard>
