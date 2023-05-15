@@ -2,14 +2,9 @@ export * from "./usePhoto";
 
 import { useState } from "react";
 import { base64FromPath } from "../utils";
-import {
-  Camera,
-  CameraResultType,
-  CameraSource,
-  Photo,
-} from "@capacitor/camera";
-import { uploadString } from "firebase/storage";
-import { storageRef } from "../firebase";
+import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
+import { ref, uploadString } from "firebase/storage";
+import { storage } from "../firebase";
 
 export interface UserPhoto {
   filepath: string;
@@ -20,23 +15,19 @@ export function usePhoto() {
   const [photo, setPhoto] = useState<UserPhoto | null>(null);
 
   const savePicture = async (
-    photo: Photo,
+    photo: UserPhoto,
     fileName: string
   ): Promise<UserPhoto> => {
-    if (photo.webPath) {
-      const base64Data = await base64FromPath(photo.webPath);
+    if (photo.webviewPath) {
+      const base64Data = await base64FromPath(photo.webviewPath);
+      const storageRef = ref(storage, fileName);
 
-      await uploadString(storageRef, base64Data, "data_url").then(
-        (snapshot) => {
-          console.log(snapshot);
-          console.log("Uploaded a base64 string!");
-        }
-      );
+      await uploadString(storageRef, base64Data, "data_url");
     }
 
     return {
       filepath: fileName,
-      webviewPath: photo.webPath,
+      webviewPath: photo.webviewPath,
     };
   };
 
@@ -60,5 +51,6 @@ export function usePhoto() {
     takePhoto,
     photo,
     savePicture,
+    setPhoto,
   };
 }
