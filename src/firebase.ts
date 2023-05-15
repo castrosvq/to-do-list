@@ -1,6 +1,15 @@
 import { initializeApp } from "firebase/app";
-import { getFirestore } from "firebase/firestore";
-import { getStorage, ref } from "firebase/storage";
+import {
+  addDoc,
+  collection,
+  getDocs,
+  getFirestore,
+  limit,
+  orderBy,
+  query,
+} from "firebase/firestore";
+import { getStorage } from "firebase/storage";
+import { Note } from "./types";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_apiKey,
@@ -15,6 +24,27 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage();
-const storageRef = ref(storage, "todoImages/name3.jpeg");
+const notesRef = collection(db, "notes");
 
-export { db, storageRef };
+const saveNote = async (note: Note) => {
+  try {
+    await addDoc(notesRef, note);
+  } catch (err) {
+    console.error(err);
+    if (err instanceof Error) alert(err.message);
+  }
+};
+
+const retrieveNotes = async (noteslimit = 100) => {
+  const customQuery = query(
+    notesRef,
+    orderBy("createdAt", "desc"),
+    limit(noteslimit)
+  );
+
+  const querySnapshot = await getDocs(customQuery);
+
+  return querySnapshot.docs.map((doc) => doc.data() as Note);
+};
+
+export { db, saveNote, storage, retrieveNotes };

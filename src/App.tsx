@@ -1,4 +1,4 @@
-import { IonList } from "@ionic/react";
+import { IonContent, IonList, RefresherEventDetail } from "@ionic/react";
 import { IonApp, setupIonicReact } from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
@@ -19,74 +19,54 @@ import "@ionic/react/css/display.css";
 import Header from "./components/Header/Header";
 import AddButton from "./components/AddButton/AddButton";
 import Card from "./components/Card/Card";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "./components/Modal/Modal";
+import { retrieveNotes } from "./firebase";
+import { Note } from "./types";
+import Refresher from "./components/Refresher/Refresher";
 
 setupIonicReact({ mode: "ios" });
 
-const todos = [
-  {
-    id: "1",
-    description: "description 1",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "2",
-    description: "description 2",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "3",
-    description: "description 3",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "4",
-    description: "description 4",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "5",
-    description: "description 5",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "6",
-    description: "description 6",
-
-    imgSrc: "https://picsum.photos/200/300",
-  },
-  {
-    id: "7",
-    description: "description 7",
-    imgSrc: "https://picsum.photos/200/300",
-  },
-];
-
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  // const { takePhoto } = usePhoto();
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [totalNotes, setTotalNotes] = useState(5);
 
   const closeModal = () => {
     setIsOpen(false);
   };
 
+  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
+    setTotalNotes(100);
+
+    setTimeout(() => {
+      event.detail.complete();
+    }, 1500);
+  }
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      const notes = await retrieveNotes(totalNotes);
+
+      setNotes(notes);
+    };
+
+    fetchNotes();
+  }, [totalNotes]);
+
   return (
     <>
       <IonApp className=" justify-start ">
         <Header />
-        <IonList>
-          {todos.map((todo) => {
-            return (
-              <Card
-                key={todo.id}
-                imgSrc={todo.imgSrc}
-                text={todo.description}
-              />
-            );
-          })}
-        </IonList>
-        <Modal closeModal={closeModal} isOpen={isOpen} />
+        <IonContent>
+          <Refresher handleRefresh={handleRefresh} />
+          <IonList>
+            {notes.map((todo) => {
+              return <Card key={todo.id} {...todo} />;
+            })}
+          </IonList>
+        </IonContent>
+        <Modal closeModal={closeModal} isOpen={isOpen} setNotes={setNotes} />
         <AddButton onClick={() => setIsOpen(true)} />
       </IonApp>
     </>
