@@ -28,7 +28,7 @@ function Card({ pictureName, value, openEditModal, id }: Props) {
   return (
     <IonCard onClick={() => openEditModal(id)} className="bg-indigo-100">
       <IonCardContent className="flex items-center">
-        <IonThumbnail className="h-auto" slot="start">
+        <IonThumbnail className="h-auto shrink-0" slot="start">
           <img src={imgUrl} />
         </IonThumbnail>
         <p className="pl-2.5 font-semibold text-black">{value}</p>
