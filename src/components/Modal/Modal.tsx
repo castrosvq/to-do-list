@@ -1,6 +1,5 @@
 import {
   IonButton,
-  IonButtons,
   IonHeader,
   IonIcon,
   IonModal,
@@ -8,28 +7,36 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { usePhoto } from "../../hooks";
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Note } from "../../types";
-import { saveNote } from "../../firebase";
+import { saveNote, storage } from "../../firebase";
 import { DocumentData } from "firebase/firestore";
+import { getDownloadURL, ref } from "firebase/storage";
 
 type Props = {
   closeModal: () => void;
   isOpen: boolean;
   setNotes: React.Dispatch<React.SetStateAction<DocumentData[]>>;
+  selectedNote: DocumentData | null;
+  onCancelEdition: () => void;
 };
 
-function Modal({ closeModal, setNotes, isOpen }: Props) {
+function Modal({
+  closeModal,
+  onCancelEdition,
+  setNotes,
+  isOpen,
+  selectedNote,
+}: Props) {
   const { takePhoto, photo, savePicture, setPhoto } = usePhoto();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [inputValue, setInputValue] = useState("");
 
   const handleOnSave = async () => {
-    const noteValue = inputRef.current?.value ?? "";
     const pictureDate = photo?.filepath.slice(0, -5) ?? "";
 
     const note: Note = {
       id: pictureDate,
-      value: noteValue,
+      value: inputValue,
       pictureName: pictureDate,
       createdAt: +pictureDate,
       updatedAt: +pictureDate,
@@ -46,49 +53,78 @@ function Modal({ closeModal, setNotes, isOpen }: Props) {
     }
   };
 
+  const handleRemovePhoto = () => {
+    setPhoto(null);
+  };
+
+  useEffect(() => {
+    if (selectedNote?.pictureName) {
+      setInputValue(selectedNote?.value);
+
+      getDownloadURL(ref(storage, selectedNote?.pictureName ?? ""))
+        .then((url) => {
+          setPhoto({
+            filepath: selectedNote?.pictureName ?? "",
+            webviewPath: url,
+          });
+        })
+        .catch((err) => {
+          if (err instanceof Error) {
+            console.log(err.message);
+          }
+        });
+    }
+
+    return () => {
+      setPhoto(null);
+    };
+  }, [selectedNote?.pictureName, selectedNote?.value, setPhoto]);
+
   return (
     <IonModal isOpen={isOpen} backdropDismiss={false}>
       <IonHeader className="mb-6">
         <IonToolbar>
-          <IonButtons slot="secondary">
-            <IonButton
-              onClick={closeModal}
-              className="font-bold"
-              color="medium"
-              fill="solid"
-            >
-              <IonIcon slot="end" src="close.svg" />
-              Cancel
-            </IonButton>
-          </IonButtons>
-          <IonButtons slot="primary">
-            <IonButton
-              onClick={handleOnSave}
-              className="font-bold"
-              color="success"
-              fill="solid"
-            >
-              <IonIcon slot="end" src="check.svg" />
-              Add
-            </IonButton>
-          </IonButtons>
           <IonTitle className="text-2xl font-bold">Nueva nota</IonTitle>
         </IonToolbar>
       </IonHeader>
       <div className="flex flex-col flex-1 items-center">
         <input
-          className="text-2xl p-4 m-6 w-9/12 text-black bg-gray-300 rounded-sm"
+          className="text-2xl py-5 text-black bg-indigo-100 rounded-sm"
           type="text"
-          ref={inputRef}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
         />
         {photo === null ? (
-          <IonButton onClick={takePhoto} className="ml-2 my-6 font-bold">
+          <IonButton
+            onClick={takePhoto}
+            className="ml-2 my-6 font-bold bg-indigo-100 text-black rounded-lg text-lg"
+            fill="clear"
+          >
             <IonIcon slot="end" src="camera.svg" />
             Tomar foto
           </IonButton>
         ) : (
           <img className="m-6 p-4" src={photo?.webviewPath} />
         )}
+        <div>
+          <IonButton
+            onClick={onCancelEdition}
+            className="bg-red-100 text-black rounded-lg text-lg"
+            fill="clear"
+          >
+            <IonIcon slot="end" src="close.svg" />
+            Cancelar
+          </IonButton>
+
+          <IonButton
+            onClick={handleOnSave}
+            className="bg-green-100 text-black rounded-lg text-lg"
+            fill="clear"
+          >
+            <IonIcon slot="end" src="check.svg" />
+            Añadir
+          </IonButton>
+        </div>
       </div>
     </IonModal>
   );
