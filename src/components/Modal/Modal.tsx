@@ -11,18 +11,19 @@ import { usePhoto } from "../../hooks";
 import { useRef } from "react";
 import { Note } from "../../types";
 import { saveNote } from "../../firebase";
+import { DocumentData } from "firebase/firestore";
 
 type Props = {
   closeModal: () => void;
   isOpen: boolean;
-  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
+  setNotes: React.Dispatch<React.SetStateAction<DocumentData[]>>;
 };
 
 function Modal({ closeModal, setNotes, isOpen }: Props) {
   const { takePhoto, photo, savePicture, setPhoto } = usePhoto();
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const handleOnSave = () => {
+  const handleOnSave = async () => {
     const noteValue = inputRef.current?.value ?? "";
     const pictureDate = photo?.filepath.slice(0, -5) ?? "";
 
@@ -35,11 +36,13 @@ function Modal({ closeModal, setNotes, isOpen }: Props) {
     };
 
     if (photo) {
-      saveNote(note);
-      savePicture(photo, pictureDate);
+      const newNote = await saveNote(note);
+      await savePicture(photo, pictureDate);
+
+      newNote?.docs[0] &&
+        setNotes((prevNotes) => [...prevNotes, newNote?.docs[0]]);
       closeModal();
       setPhoto(null);
-      setNotes((prevNotes) => [note, ...prevNotes]);
     }
   };
 
