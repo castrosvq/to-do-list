@@ -1,16 +1,14 @@
-import {
-  IonCard,
-  IonCardContent,
-  IonItem,
-  IonLabel,
-  IonThumbnail,
-} from "@ionic/react";
+import { IonCard, IonCardContent, IonThumbnail } from "@ionic/react";
 import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { storage } from "../../firebase";
 import { Note } from "../../types";
 
-function Card({ pictureName, value }: Note) {
+type Props = Note & {
+  openEditModal: (noteId: string) => void;
+};
+
+function Card({ pictureName, value, openEditModal, id }: Props) {
   const [imgUrl, setImgUrl] = useState("");
 
   useEffect(() => {
@@ -28,14 +26,12 @@ function Card({ pictureName, value }: Note) {
   }, [pictureName]);
 
   return (
-    <IonCard>
-      <IonCardContent>
-        <IonItem>
-          <IonThumbnail slot="start">
-            <img src={imgUrl} />
-          </IonThumbnail>
-          <IonLabel>{value}</IonLabel>
-        </IonItem>
+    <IonCard onClick={() => openEditModal(id)} className="bg-indigo-100">
+      <IonCardContent className="flex items-center">
+        <IonThumbnail className="h-auto" slot="start">
+          <img src={imgUrl} />
+        </IonThumbnail>
+        <p className="pl-2.5 font-semibold text-black">{value}</p>
       </IonCardContent>
     </IonCard>
   );
