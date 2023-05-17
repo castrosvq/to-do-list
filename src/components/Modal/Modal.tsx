@@ -7,7 +7,7 @@ import {
   IonToolbar,
 } from "@ionic/react";
 import { usePhoto } from "../../hooks";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { Note } from "../../types";
 import { saveNote, storage } from "../../firebase";
 import { DocumentData } from "firebase/firestore";
@@ -89,7 +89,7 @@ function Modal({
       </IonHeader>
       <div className="flex flex-col flex-1 items-center">
         <input
-          className="text-2xl py-5 text-black bg-indigo-100 rounded-sm"
+          className="text-2xl p-4 text-black bg-indigo-100 rounded-sm w-11/12"
           type="text"
           value={inputValue}
           onChange={(e) => setInputValue(e.target.value)}
@@ -104,7 +104,10 @@ function Modal({
             Tomar foto
           </IonButton>
         ) : (
-          <img className="m-6 p-4" src={photo?.webviewPath} />
+          <>
+            <img className="m-6 p-4" src={photo?.webviewPath} />
+            <button onClick={handleRemovePhoto}>remove photo</button>
+          </>
         )}
         <div>
           <IonButton
@@ -122,7 +125,7 @@ function Modal({
             fill="clear"
           >
             <IonIcon slot="end" src="check.svg" />
-            Añadir
+            {selectedNote ? "Editar" : "Añadir"}
           </IonButton>
         </div>
       </div>
