@@ -7,9 +7,12 @@ import {
   limit,
   orderBy,
   query,
+  startAfter,
+  where,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Note } from "./types";
+import { NOTES } from "./constants";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_apiKey,
@@ -24,27 +27,60 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const storage = getStorage();
-const notesRef = collection(db, "notes");
+const notesRef = collection(db, NOTES);
+
+const retrieveOneNote = async (id: string) => {
+  const q = query(notesRef, where("id", "==", id));
+  const documentSnapshots = await getDocs(q);
+
+  return documentSnapshots;
+};
 
 const saveNote = async (note: Note) => {
   try {
     await addDoc(notesRef, note);
+
+    const newNote = await retrieveOneNote(note.id);
+
+    return newNote;
   } catch (err) {
     console.error(err);
     if (err instanceof Error) alert(err.message);
   }
 };
 
-const retrieveNotes = async (noteslimit = 100) => {
-  const customQuery = query(
-    notesRef,
-    orderBy("createdAt", "desc"),
-    limit(noteslimit)
-  );
+const retrieveAllNotes = async () => {
+  const q = query(notesRef, orderBy("createdAt", "asc"));
+  const documentSnapshots = await getDocs(q);
 
-  const querySnapshot = await getDocs(customQuery);
-
-  return querySnapshot.docs.map((doc) => doc.data() as Note);
+  return documentSnapshots;
 };
 
-export { db, saveNote, storage, retrieveNotes };
+const retrieveLimitNotes = async (resultsLimit = 10) => {
+  const q = query(notesRef, orderBy("createdAt", "asc"), limit(resultsLimit));
+  const documentSnapshots = await getDocs(q);
+
+  return documentSnapshots;
+};
+
+const retrieveNextNotes = async (resultsLimit = 10, lastVisible: unknown) => {
+  const q = query(
+    notesRef,
+    orderBy("createdAt", "asc"),
+    limit(resultsLimit),
+    startAfter(lastVisible)
+  );
+  const documentSnapshots = await getDocs(q);
+
+  return documentSnapshots;
+};
+
+export {
+  db,
+  retrieveAllNotes,
+  retrieveLimitNotes,
+  retrieveNextNotes,
+  retrieveOneNote,
+  saveNote,
+  storage,
+};
