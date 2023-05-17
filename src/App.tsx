@@ -1,5 +1,11 @@
-import { IonContent, IonList, RefresherEventDetail } from "@ionic/react";
-import { IonApp, setupIonicReact } from "@ionic/react";
+import {
+  IonApp,
+  IonContent,
+  IonInfiniteScroll,
+  IonInfiniteScrollContent,
+  IonList,
+  setupIonicReact,
+} from "@ionic/react";
 
 /* Core CSS required for Ionic components to work properly */
 import "@ionic/react/css/core.css";
@@ -21,50 +27,56 @@ import AddButton from "./components/AddButton/AddButton";
 import Card from "./components/Card/Card";
 import { useEffect, useState } from "react";
 import Modal from "./components/Modal/Modal";
-import { retrieveNotes } from "./firebase";
+import { retrieveLimitNotes, retrieveNextNotes } from "./firebase";
 import { Note } from "./types";
-import Refresher from "./components/Refresher/Refresher";
+import { DocumentData } from "firebase/firestore";
 
 setupIonicReact({ mode: "ios" });
 
 function App() {
   const [isOpen, setIsOpen] = useState(false);
-  const [notes, setNotes] = useState<Note[]>([]);
-  const [totalNotes, setTotalNotes] = useState(5);
+  const [notes, setNotes] = useState<DocumentData[]>([]);
 
   const closeModal = () => {
     setIsOpen(false);
   };
 
-  function handleRefresh(event: CustomEvent<RefresherEventDetail>) {
-    setTotalNotes(100);
-
-    setTimeout(() => {
-      event.detail.complete();
-    }, 1500);
-  }
-
   useEffect(() => {
     const fetchNotes = async () => {
-      const notes = await retrieveNotes(totalNotes);
+      const notes = await retrieveLimitNotes(7);
 
-      setNotes(notes);
+      setNotes(notes.docs);
     };
 
     fetchNotes();
-  }, [totalNotes]);
+  }, []);
 
   return (
     <>
       <IonApp className=" justify-start ">
         <Header />
         <IonContent>
-          <Refresher handleRefresh={handleRefresh} />
           <IonList>
             {notes.map((todo) => {
-              return <Card key={todo.id} {...todo} />;
+              const currentNote = todo.data() as Note;
+
+              return <Card key={currentNote.id} {...currentNote} />;
             })}
           </IonList>
+
+          <IonInfiniteScroll
+            onIonInfinite={async (event) => {
+              const lastVisible = notes[notes.length - 1];
+
+              const newNotes = await retrieveNextNotes(5, lastVisible);
+
+              setNotes([...notes, ...newNotes.docs]);
+
+              await event?.target?.complete();
+            }}
+          >
+            <IonInfiniteScrollContent></IonInfiniteScrollContent>
+          </IonInfiniteScroll>
         </IonContent>
         <Modal closeModal={closeModal} isOpen={isOpen} setNotes={setNotes} />
         <AddButton onClick={() => setIsOpen(true)} />
