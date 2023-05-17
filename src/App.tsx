@@ -27,7 +27,11 @@ import AddButton from "./components/AddButton/AddButton";
 import Card from "./components/Card/Card";
 import { useEffect, useState } from "react";
 import Modal from "./components/Modal/Modal";
-import { retrieveLimitNotes, retrieveNextNotes } from "./firebase";
+import {
+  retrieveLimitNotes,
+  retrieveNextNotes,
+  retrieveOneNote,
+} from "./firebase";
 import { Note } from "./types";
 import { DocumentData } from "firebase/firestore";
 
@@ -36,8 +40,23 @@ setupIonicReact({ mode: "ios" });
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState<DocumentData[]>([]);
+  const [selectedNote, setSelectedNote] = useState<DocumentData | null>(null);
 
   const closeModal = () => {
+    setIsOpen(false);
+  };
+
+  const openEditModal = async (noteId: string) => {
+    const noteToEdit = await retrieveOneNote(noteId);
+
+    if (noteToEdit?.docs[0].data()) {
+      setSelectedNote(noteToEdit?.docs[0].data());
+      setIsOpen(true);
+    }
+  };
+
+  const onCancelEdition = () => {
+    setSelectedNote(null);
     setIsOpen(false);
   };
 
@@ -60,7 +79,13 @@ function App() {
             {notes.map((todo) => {
               const currentNote = todo.data() as Note;
 
-              return <Card key={currentNote.id} {...currentNote} />;
+              return (
+                <Card
+                  key={currentNote.id}
+                  openEditModal={openEditModal}
+                  {...currentNote}
+                />
+              );
             })}
           </IonList>
 
@@ -78,7 +103,13 @@ function App() {
             <IonInfiniteScrollContent></IonInfiniteScrollContent>
           </IonInfiniteScroll>
         </IonContent>
-        <Modal closeModal={closeModal} isOpen={isOpen} setNotes={setNotes} />
+        <Modal
+          closeModal={closeModal}
+          isOpen={isOpen}
+          setNotes={setNotes}
+          selectedNote={selectedNote}
+          onCancelEdition={onCancelEdition}
+        />
         <AddButton onClick={() => setIsOpen(true)} />
       </IonApp>
     </>

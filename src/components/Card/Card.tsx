@@ -10,7 +10,11 @@ import { useEffect, useState } from "react";
 import { storage } from "../../firebase";
 import { Note } from "../../types";
 
-function Card({ pictureName, value }: Note) {
+type Props = Note & {
+  openEditModal: (noteId: string) => void;
+};
+
+function Card({ pictureName, value, openEditModal, id }: Props) {
   const [imgUrl, setImgUrl] = useState("");
 
   useEffect(() => {
@@ -28,7 +32,7 @@ function Card({ pictureName, value }: Note) {
   }, [pictureName]);
 
   return (
-    <IonCard>
+    <IonCard onClick={() => openEditModal(id)}>
       <IonCardContent>
         <IonItem>
           <IonThumbnail slot="start">
