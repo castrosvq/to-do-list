@@ -1,9 +1,6 @@
-export * from "./usePhoto";
-
-import { useState } from "react";
 import { base64FromPath } from "../utils";
 import { Camera, CameraResultType, CameraSource } from "@capacitor/camera";
-import { ref, uploadString } from "firebase/storage";
+import { deleteObject, ref, uploadString } from "firebase/storage";
 import { storage } from "../firebase";
 
 export interface UserPhoto {
@@ -11,9 +8,11 @@ export interface UserPhoto {
   webviewPath?: string;
 }
 
-export function usePhoto() {
-  const [photo, setPhoto] = useState<UserPhoto | null>(null);
+type Props = {
+  setPhoto: React.Dispatch<React.SetStateAction<UserPhoto | null>>;
+};
 
+export function usePhoto({ setPhoto }: Props) {
   const savePicture = async (
     photo: UserPhoto,
     fileName: string
@@ -47,10 +46,22 @@ export function usePhoto() {
     setPhoto(newPhoto);
   };
 
+  const removePhoto = async (photoFilepath: string) => {
+    const storageRef = ref(storage, photoFilepath);
+
+    deleteObject(storageRef)
+      .then(() => {
+        console.log("Picture Deleted");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+  };
+
   return {
-    takePhoto,
-    photo,
+    removePhoto,
     savePicture,
     setPhoto,
+    takePhoto,
   };
 }
