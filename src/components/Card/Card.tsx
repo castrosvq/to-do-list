@@ -5,6 +5,7 @@ import { storage } from "../../firebase";
 import { Note } from "../../types";
 
 type Props = Note & {
+  id: string;
   openEditModal: (noteId: string) => void;
 };
 
@@ -19,7 +20,7 @@ function Card({ pictureName, value, openEditModal, id }: Props) {
         })
         .catch((err) => {
           if (err instanceof Error) {
-            console.log(err.message);
+            console.error(err.message);
           }
         });
     }, 500);
