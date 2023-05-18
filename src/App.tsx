@@ -40,17 +40,13 @@ setupIonicReact({ mode: "ios" });
 function App() {
   const [isOpen, setIsOpen] = useState(false);
   const [notes, setNotes] = useState<DocumentData[]>([]);
-  const [selectedNote, setSelectedNote] = useState<DocumentData | null>(null);
-
-  const closeModal = () => {
-    setIsOpen(false);
-  };
+  const [selectedNote, setSelectedNote] = useState<string | null>(null);
 
   const openEditModal = async (noteId: string) => {
     const noteToEdit = await retrieveOneNote(noteId);
 
-    if (noteToEdit?.docs[0].data()) {
-      setSelectedNote(noteToEdit?.docs[0].data());
+    if (noteToEdit?.id) {
+      setSelectedNote(noteToEdit?.id);
       setIsOpen(true);
     }
   };
@@ -76,14 +72,15 @@ function App() {
         <Header />
         <IonContent>
           <IonList>
-            {notes.map((todo) => {
-              const currentNote = todo.data() as Note;
+            {notes.map((note) => {
+              const formattedNote = note.data() as Note;
 
               return (
                 <Card
-                  key={currentNote.id}
+                  key={formattedNote.createdAt}
+                  id={note.id}
                   openEditModal={openEditModal}
-                  {...currentNote}
+                  {...formattedNote}
                 />
               );
             })}
@@ -103,7 +100,6 @@ function App() {
           </IonInfiniteScroll>
         </IonContent>
         <Modal
-          closeModal={closeModal}
           isOpen={isOpen}
           setNotes={setNotes}
           selectedNote={selectedNote}
