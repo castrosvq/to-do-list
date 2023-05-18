@@ -2,6 +2,7 @@ import { initializeApp } from "firebase/app";
 import {
   addDoc,
   collection,
+  deleteDoc,
   doc,
   getDoc,
   getDocs,
@@ -66,6 +67,12 @@ const editNote = async ({ noteId, note }: EditNote) => {
   return await retrieveOneNote(noteId);
 };
 
+const deleteNote = async (noteId: string) => {
+  const noteRef = doc(db, NOTES, noteId);
+
+  return await deleteDoc(noteRef);
+};
+
 const retrieveAllNotes = async () => {
   const q = query(notesRef, orderBy("createdAt", "asc"));
   const documentSnapshots = await getDocs(q);
@@ -101,4 +108,5 @@ export {
   retrieveOneNote,
   saveNote,
   storage,
+  deleteNote,
 };

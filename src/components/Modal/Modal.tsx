@@ -9,7 +9,13 @@ import {
 import { UserPhoto, usePhoto } from "../../hooks";
 import { useEffect, useState } from "react";
 import { Note } from "../../types";
-import { editNote, retrieveOneNote, saveNote, storage } from "../../firebase";
+import {
+  deleteNote,
+  editNote,
+  retrieveOneNote,
+  saveNote,
+  storage,
+} from "../../firebase";
 import { DocumentData } from "firebase/firestore";
 import { getDownloadURL, ref } from "firebase/storage";
 
@@ -104,6 +110,19 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
     onCancelEdition();
   };
 
+  const deleteAllNote = async () => {
+    if (tempNote && selectedNote) {
+      await removePhoto(tempNote?.pictureName);
+      await deleteNote(selectedNote);
+
+      setNotes((prevNotes) =>
+        prevNotes.filter((note) => note.id !== selectedNote)
+      );
+
+      onCancelEdition();
+    }
+  };
+
   useEffect(() => {
     if (selectedNote) {
       const fetchNotes = async () => {
@@ -163,6 +182,7 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
               <IonIcon slot="end" src="delete.svg" />
               Eliminar foto
             </IonButton>
+            <IonButton onClick={deleteAllNote}>Eliminar nota</IonButton>
           </>
         )}
         <div>
