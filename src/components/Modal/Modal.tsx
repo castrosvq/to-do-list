@@ -1,5 +1,6 @@
 import {
   IonButton,
+  IonButtons,
   IonHeader,
   IonIcon,
   IonModal,
@@ -152,6 +153,26 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
     <IonModal isOpen={isOpen} backdropDismiss={false}>
       <IonHeader className="mb-6">
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonButton
+              onClick={handleCloseModal}
+              className="font-bold bg-indigo-200 text-black rounded-lg text-lg mb-1.5"
+              fill="clear"
+            >
+              <IonIcon slot="end" src="close.svg" />
+              Cancelar
+            </IonButton>
+          </IonButtons>
+          <IonButtons slot="end">
+            <IonButton
+              onClick={handleOnSaveOrEdit}
+              className="font-bold bg-green-200 text-black rounded-lg text-lg mb-1.5"
+              fill="clear"
+            >
+              <IonIcon slot="end" src="check.svg" />
+              {selectedNote ? "Editar" : "Añadir"}
+            </IonButton>
+          </IonButtons>
           <IonTitle className="text-2xl font-bold">Nueva nota</IonTitle>
         </IonToolbar>
       </IonHeader>
@@ -174,36 +195,27 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
         ) : (
           <>
             <img className="m-4 p-4" src={tempPhoto?.webviewPath} />
-            <IonButton
-              className="bg-gray-300 text-black rounded-lg text-lg mb-1.5"
-              onClick={handleRemovePhoto}
-              fill="clear"
-            >
-              <IonIcon slot="end" src="delete.svg" />
-              Eliminar foto
-            </IonButton>
-            <IonButton onClick={deleteAllNote}>Eliminar nota</IonButton>
+            <div>
+              <IonButton
+                className="font-bold bg-red-100 text-black rounded-lg text-lg mb-1.5"
+                onClick={handleRemovePhoto}
+                fill="clear"
+              >
+                <IonIcon slot="end" src="delete.svg" />
+                Eliminar foto
+              </IonButton>
+              <IonButton
+                className="bg-red-100 font-bold text-black rounded-lg text-lg mb-1.5"
+                onClick={deleteAllNote}
+                fill="clear"
+              >
+                <IonIcon slot="end" src="bin.svg" />
+                Eliminar nota
+              </IonButton>
+            </div>
           </>
         )}
-        <div>
-          <IonButton
-            onClick={handleCloseModal}
-            className="bg-red-100 text-black rounded-lg text-lg"
-            fill="clear"
-          >
-            <IonIcon slot="end" src="close.svg" />
-            Cancelar
-          </IonButton>
-
-          <IonButton
-            onClick={handleOnSaveOrEdit}
-            className="bg-green-100 text-black rounded-lg text-lg"
-            fill="clear"
-          >
-            <IonIcon slot="end" src="check.svg" />
-            {selectedNote ? "Editar" : "Añadir"}
-          </IonButton>
-        </div>
+        <div></div>
       </div>
     </IonModal>
   );
