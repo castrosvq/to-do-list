@@ -1,4 +1,5 @@
 import {
+  IonAlert,
   IonButton,
   IonButtons,
   IonHeader,
@@ -31,6 +32,9 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [tempPhoto, setTempPhoto] = useState<UserPhoto | null>(null);
   const [tempNote, setTempNote] = useState<Note | null>(null);
+
+  const [handlerMessage, setHandlerMessage] = useState("");
+  const [roleMessage, setRoleMessage] = useState("");
 
   const { takePhoto, savePicture, removePhoto } = usePhoto({
     setPhoto: setTempPhoto,
@@ -208,10 +212,36 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
                 className="bg-red-100 font-bold text-black rounded-lg text-lg mb-1.5"
                 onClick={deleteAllNote}
                 fill="clear"
+                id="present-alert"
               >
                 <IonIcon slot="end" src="bin.svg" />
                 Eliminar nota
               </IonButton>
+              <IonAlert
+                header="Alert!"
+                trigger="present-alert"
+                buttons={[
+                  {
+                    text: "Cancel",
+                    role: "cancel",
+                    handler: () => {
+                      setHandlerMessage("Alert canceled");
+                    },
+                  },
+                  {
+                    text: "OK",
+                    role: "confirm",
+                    handler: () => {
+                      setHandlerMessage("Alert confirmed");
+                    },
+                  },
+                ]}
+                onDidDismiss={({ detail }) =>
+                  setRoleMessage(`Dismissed with role: ${detail.role}`)
+                }
+              ></IonAlert>
+              <p>{handlerMessage}</p>
+              <p>{roleMessage}</p>
             </div>
           </>
         )}
