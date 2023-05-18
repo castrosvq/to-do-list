@@ -2,13 +2,15 @@ import { initializeApp } from "firebase/app";
 import {
   addDoc,
   collection,
+  doc,
+  getDoc,
   getDocs,
   getFirestore,
   limit,
   orderBy,
   query,
   startAfter,
-  where,
+  updateDoc,
 } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 import { Note } from "./types";
@@ -29,24 +31,39 @@ const db = getFirestore(app);
 const storage = getStorage();
 const notesRef = collection(db, NOTES);
 
-const retrieveOneNote = async (id: string) => {
-  const q = query(notesRef, where("id", "==", id));
-  const documentSnapshots = await getDocs(q);
+const retrieveOneNote = async (noteId: string) => {
+  const docRef = doc(db, NOTES, noteId);
+  const docSnap = await getDoc(docRef);
 
-  return documentSnapshots;
+  if (!docSnap.exists()) {
+    return null;
+  }
+
+  return docSnap;
 };
 
 const saveNote = async (note: Note) => {
   try {
-    await addDoc(notesRef, note);
+    const newNote = await addDoc(notesRef, note);
 
-    const newNote = await retrieveOneNote(note.id);
-
-    return newNote;
+    return await retrieveOneNote(newNote.id);
   } catch (err) {
     console.error(err);
     if (err instanceof Error) alert(err.message);
   }
+};
+
+type EditNote = {
+  noteId: string;
+  note: Partial<Note>;
+};
+
+const editNote = async ({ noteId, note }: EditNote) => {
+  const notesRef = doc(db, NOTES, noteId);
+
+  await updateDoc(notesRef, note);
+
+  return await retrieveOneNote(noteId);
 };
 
 const retrieveAllNotes = async () => {
@@ -77,6 +94,7 @@ const retrieveNextNotes = async (resultsLimit = 10, lastVisible: unknown) => {
 
 export {
   db,
+  editNote,
   retrieveAllNotes,
   retrieveLimitNotes,
   retrieveNextNotes,
