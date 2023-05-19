@@ -49,13 +49,7 @@ export function usePhoto({ setPhoto }: Props) {
   const removePhoto = async (photoFilepath: string) => {
     const storageRef = ref(storage, photoFilepath);
 
-    deleteObject(storageRef)
-      .then(() => {
-        console.log("Picture Deleted");
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    await deleteObject(storageRef);
   };
 
   return {

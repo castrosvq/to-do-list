@@ -33,8 +33,8 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
   const [tempPhoto, setTempPhoto] = useState<UserPhoto | null>(null);
   const [tempNote, setTempNote] = useState<Note | null>(null);
 
-  const [handlerMessage, setHandlerMessage] = useState("");
-  const [roleMessage, setRoleMessage] = useState("");
+  const [handlerMessage] = useState("");
+  const [roleMessage] = useState("");
 
   const { takePhoto, savePicture, removePhoto } = usePhoto({
     setPhoto: setTempPhoto,
@@ -119,11 +119,9 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
     if (tempNote && selectedNote) {
       await removePhoto(tempNote?.pictureName);
       await deleteNote(selectedNote);
-
       setNotes((prevNotes) =>
         prevNotes.filter((note) => note.id !== selectedNote)
       );
-
       onCancelEdition();
     }
   };
@@ -156,26 +154,22 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
   return (
     <IonModal isOpen={isOpen} backdropDismiss={false}>
       <IonHeader className="mb-6">
-        <IonToolbar>
+        <IonToolbar className="h-12">
           <IonButtons slot="start">
-            <IonButton
+            <button
               onClick={handleCloseModal}
-              className="font-bold bg-indigo-200 text-black rounded-lg text-lg mb-1.5"
-              fill="clear"
+              className="font-bold bg-yellow-400 text-black rounded-lg text-lg h-10 px-1.5"
             >
-              <IonIcon slot="end" src="close.svg" />
-              Cancelar
-            </IonButton>
+              Cancelar X
+            </button>
           </IonButtons>
           <IonButtons slot="end">
-            <IonButton
+            <button
               onClick={handleOnSaveOrEdit}
-              className="font-bold bg-green-200 text-black rounded-lg text-lg mb-1.5"
-              fill="clear"
+              className="font-bold bg-green-300 text-black rounded-lg text-lg h-10 px-1.5"
             >
-              <IonIcon slot="end" src="check.svg" />
-              {selectedNote ? "Editar" : "Añadir"}
-            </IonButton>
+              {selectedNote ? "Editar ✔" : "Añadir ✔"}
+            </button>
           </IonButtons>
           <IonTitle className="text-2xl font-bold">Nueva nota</IonTitle>
         </IonToolbar>
@@ -190,7 +184,7 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
         {tempPhoto === null ? (
           <IonButton
             onClick={takePhoto}
-            className="ml-2 my-6 font-bold bg-indigo-100 text-black rounded-lg text-lg"
+            className="ml-2 my-6 font-bold bg-indigo-200 text-black rounded-lg text-lg"
             fill="clear"
           >
             <IonIcon slot="end" src="camera.svg" />
@@ -201,16 +195,15 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
             <img className="m-4 p-4" src={tempPhoto?.webviewPath} />
             <div>
               <IonButton
-                className="font-bold bg-red-100 text-black rounded-lg text-lg mb-1.5"
+                className="font-bold bg-red-400 text-black rounded-lg text-lg mb-1.5"
                 onClick={handleRemovePhoto}
                 fill="clear"
               >
                 <IonIcon slot="end" src="delete.svg" />
-                Eliminar foto
+                Borrar foto
               </IonButton>
               <IonButton
-                className="bg-red-100 font-bold text-black rounded-lg text-lg mb-1.5"
-                onClick={deleteAllNote}
+                className="bg-red-400 font-bold text-black rounded-lg text-lg mb-1.5"
                 fill="clear"
                 id="present-alert"
               >
@@ -218,27 +211,19 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
                 Eliminar nota
               </IonButton>
               <IonAlert
-                header="Alert!"
+                header="Estás seguro?"
                 trigger="present-alert"
                 buttons={[
                   {
-                    text: "Cancel",
+                    text: "Cancelar",
                     role: "cancel",
-                    handler: () => {
-                      setHandlerMessage("Alert canceled");
-                    },
                   },
                   {
-                    text: "OK",
+                    text: "Ok",
                     role: "confirm",
-                    handler: () => {
-                      setHandlerMessage("Alert confirmed");
-                    },
+                    handler: () => deleteAllNote(),
                   },
                 ]}
-                onDidDismiss={({ detail }) =>
-                  setRoleMessage(`Dismissed with role: ${detail.role}`)
-                }
               ></IonAlert>
               <p>{handlerMessage}</p>
               <p>{roleMessage}</p>
