@@ -67,47 +67,45 @@ function App() {
   }, []);
 
   return (
-    <>
-      <IonApp className=" justify-start ">
-        <Header />
-        <IonContent>
-          <IonList>
-            {notes.map((note) => {
-              const formattedNote = note.data() as Note;
+    <IonApp className=" justify-start ">
+      <Header />
+      <IonContent>
+        <IonList>
+          {notes.map((note) => {
+            const formattedNote = note.data() as Note;
 
-              return (
-                <Card
-                  key={formattedNote.createdAt}
-                  id={note.id}
-                  openEditModal={openEditModal}
-                  {...formattedNote}
-                />
-              );
-            })}
-          </IonList>
-          <IonInfiniteScroll
-            onIonInfinite={async (event) => {
-              const lastVisible = notes[notes.length - 1];
+            return (
+              <Card
+                key={formattedNote.createdAt}
+                id={note.id}
+                openEditModal={openEditModal}
+                {...formattedNote}
+              />
+            );
+          })}
+        </IonList>
+        <IonInfiniteScroll
+          onIonInfinite={async (event) => {
+            const lastVisible = notes[notes.length - 1];
 
-              const newNotes = await retrieveNextNotes(5, lastVisible);
+            const newNotes = await retrieveNextNotes(5, lastVisible);
 
-              setNotes([...notes, ...newNotes.docs]);
+            setNotes([...notes, ...newNotes.docs]);
 
-              await event?.target?.complete();
-            }}
-          >
-            <IonInfiniteScrollContent></IonInfiniteScrollContent>
-          </IonInfiniteScroll>
-        </IonContent>
-        <Modal
-          isOpen={isOpen}
-          setNotes={setNotes}
-          selectedNote={selectedNote}
-          onCancelEdition={onCancelEdition}
-        />
-        <AddButton onClick={() => setIsOpen(true)} />
-      </IonApp>
-    </>
+            await event?.target?.complete();
+          }}
+        >
+          <IonInfiniteScrollContent></IonInfiniteScrollContent>
+        </IonInfiniteScroll>
+      </IonContent>
+      <Modal
+        isOpen={isOpen}
+        setNotes={setNotes}
+        selectedNote={selectedNote}
+        onCancelEdition={onCancelEdition}
+      />
+      <AddButton onClick={() => setIsOpen(true)} />
+    </IonApp>
   );
 }
 
