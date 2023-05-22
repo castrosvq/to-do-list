@@ -3,6 +3,7 @@ import { getDownloadURL, ref } from "firebase/storage";
 import { useEffect, useState } from "react";
 import { storage } from "../../firebase";
 import { Note } from "../../types";
+import { humanDateFormat } from "../../utils";
 
 type Props = Note & {
   id: string;
@@ -19,19 +20,10 @@ function Card({
 }: Props) {
   const [imgUrl, setImgUrl] = useState("");
 
-  const date = new Date(createdAt);
-  const humanDateFormat = date.toLocaleString("en-GB");
-
-  const dateEdit = new Date(updatedAt);
-  const humanDateFormatEDit = dateEdit.toLocaleString("en-GB");
-
-  const fecha = () => {
-    if (humanDateFormatEDit !== humanDateFormat) {
-      return "Fecha de edición: " + humanDateFormatEDit;
-    } else {
-      return "Fecha de creación: " + humanDateFormat;
-    }
-  };
+  const fecha =
+    updatedAt !== createdAt
+      ? `Fecha de edición: ${humanDateFormat(updatedAt)}`
+      : `Fecha de creación: ${humanDateFormat(createdAt)}  `;
 
   useEffect(() => {
     setTimeout(() => {
@@ -50,7 +42,7 @@ function Card({
   return (
     <IonCard onClick={() => openEditModal(id)} className="bg-indigo-100">
       <p className="flex justify-end mt-1.5 mr-2 text-indigo-500 italic">
-        {fecha()}
+        {fecha}
       </p>
 
       <IonCardContent className="flex items-center">

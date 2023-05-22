@@ -17,3 +17,10 @@ export async function base64FromPath(path: string): Promise<string> {
     reader.readAsDataURL(blob);
   });
 }
+
+export const humanDateFormat = (timeStamp: number) => {
+  const date = new Date(timeStamp);
+  const humanDateFormat = date.toLocaleString();
+
+  return humanDateFormat;
+};
