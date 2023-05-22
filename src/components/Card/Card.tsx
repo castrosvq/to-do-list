@@ -9,8 +9,29 @@ type Props = Note & {
   openEditModal: (noteId: string) => void;
 };
 
-function Card({ pictureName, value, openEditModal, id }: Props) {
+function Card({
+  pictureName,
+  value,
+  openEditModal,
+  id,
+  createdAt,
+  updatedAt,
+}: Props) {
   const [imgUrl, setImgUrl] = useState("");
+
+  const date = new Date(createdAt);
+  const humanDateFormat = date.toLocaleString("en-GB");
+
+  const dateEdit = new Date(updatedAt);
+  const humanDateFormatEDit = dateEdit.toLocaleString("en-GB");
+
+  const fecha = () => {
+    if (humanDateFormatEDit !== humanDateFormat) {
+      return "Fecha de edición: " + humanDateFormatEDit;
+    } else {
+      return "Fecha de creación: " + humanDateFormat;
+    }
+  };
 
   useEffect(() => {
     setTimeout(() => {
@@ -28,6 +49,10 @@ function Card({ pictureName, value, openEditModal, id }: Props) {
 
   return (
     <IonCard onClick={() => openEditModal(id)} className="bg-indigo-100">
+      <p className="flex justify-end mt-1.5 mr-2 text-indigo-500 italic">
+        {fecha()}
+      </p>
+
       <IonCardContent className="flex items-center">
         <IonThumbnail className="h-auto shrink-0" slot="start">
           <img src={imgUrl} />

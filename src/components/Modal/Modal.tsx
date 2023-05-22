@@ -32,10 +32,8 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
   const [inputValue, setInputValue] = useState("");
   const [tempPhoto, setTempPhoto] = useState<UserPhoto | null>(null);
   const [tempNote, setTempNote] = useState<Note | null>(null);
-
   const [handlerMessage] = useState("");
   const [roleMessage] = useState("");
-
   const { takePhoto, savePicture, removePhoto } = usePhoto({
     setPhoto: setTempPhoto,
   });
@@ -101,6 +99,7 @@ function Modal({ onCancelEdition, setNotes, isOpen, selectedNote }: Props) {
         newNote?.data() && setNotes((prevNotes) => [...prevNotes, newNote]);
         handleCloseModal();
       }
+
       return;
     }
   };
